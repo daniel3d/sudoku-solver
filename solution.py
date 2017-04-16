@@ -81,24 +81,30 @@ def naked_twins(values):
     """
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
-    for unit in unitlist:
-        # Find if he have values with 2 digits
-        doubles = [values[box] for box in unit if len(values[box]) == 2]
-        if not doubles: continue
-        # Find if we have twin values
-        twins = [item for item, count in Counter(doubles).items() if count > 1]
-        if not twins: continue
 
-        for box in unit:
-            # Remove all twin digits from peers
-            # Only if he have values with more than 1 digit
-            if not len(values[box]) > 1: continue
-            for twin in twins:
-                if values[box] == twin: continue
+    doubles = {}
+
+    # First find posible twins.
+    for unit in unitlist:
+        for square in unit:
+            # If we have double value let process it.
+            if len(values[square]) == 2:
+                twin = values[square]
+                if twin in doubles:
+                    if not square in doubles[twin]:
+                        doubles[twin].append(square)
+                else:
+                    doubles.update({twin: [square]})
+
+        ## FIX THIS 
+        # We have twin squre let process it.
+        if len(doubles[twin]) > 1:
+            for s in unit:
+                if not len(values[s]) > 1 or values[s] == twin: continue
                 for digit in twin:
-                    if digit in values[box]:
+                    if digit in values[s]:
                         # Remove the digit fro the peer
-                        values[box] = values[box].lstrip(digit)
+                        values[s] = values[s].lstrip(digit)
 
     return values
 
