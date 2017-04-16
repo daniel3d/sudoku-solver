@@ -1,4 +1,5 @@
 from pprint import pprint
+from collections import Counter
 
 assignments = []
 
@@ -53,9 +54,23 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
-
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
+    for unit in unitlist:
+        doubles = [values[box] for box in unit if len(values[box]) == 2]
+        if doubles: # Only if he have values with 2 digits
+            twins = [item for item, count in Counter(doubles).items() if count > 1]
+            if twins: # Only if we have twin values
+                for box in unit:
+                    if len(values[box]) > 1:
+                        # Let remove all twin values from peers
+                        for twin in twins:
+                            if values[box] != twin:
+                                for digit in twin:
+                                    if digit in values[box]:
+                                        # Remove the digit
+                                        values[box] = values[box].lstrip(digit)
+    return values
 
 def grid_values(grid):
     """
@@ -119,11 +134,11 @@ def search(values):
     values = reduce_puzzle(values)
     if values is False:
         return False ## Failed earlier
-    if all(len(values[s]) == 1 for s in boxes): 
+    if all(len(values[s]) == 1 for s in boxes):
         return values ## Solved!
     # Choose one of the unfilled squares with the fewest possibilities
     n,s = min((len(values[s]), s) for s in boxes if len(values[s]) > 1)
-    # Now use recurrence to solve each one of the resulting sudokus, and 
+    # Now use recurrence to solve each one of the resulting sudokus, and
     for value in values[s]:
         new_sudoku = values.copy()
         new_sudoku[s] = value
