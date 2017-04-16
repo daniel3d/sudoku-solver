@@ -3,11 +3,12 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: Loop over the unit list squares and if we find two digits twin values between peers
+remove the two digits from all other squares except the twin peer. This will further reduce the search space for solving the sudoku.
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: First, add the sudoku diagonal peers to the unit list and then run the same functions that we use to solve regular sudoku.
 
 ### Install
 
