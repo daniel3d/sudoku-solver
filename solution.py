@@ -1,5 +1,4 @@
 from pprint import pprint
-from collections import Counter
 
 assignments = []
 
@@ -81,31 +80,20 @@ def naked_twins(values):
     """
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
-
-    doubles = {}
-
-    # First find posible twins.
     for unit in unitlist:
+        twins = []
+        # Find twins in this unit
         for square in unit:
-            # If we have double value let process it.
             if len(values[square]) == 2:
-                twin = values[square]
-                if twin in doubles:
-                    if not square in doubles[twin]:
-                        doubles[twin].append(square)
-                else:
-                    doubles.update({twin: [square]})
-
-        ## FIX THIS 
-        # We have twin squre let process it.
-        if len(doubles[twin]) > 1:
-            for s in unit:
-                if not len(values[s]) > 1 or values[s] == twin: continue
-                for digit in twin:
-                    if digit in values[s]:
-                        # Remove the digit fro the peer
-                        values[s] = values[s].lstrip(digit)
-
+                for twin in unit:
+                    if values[twin] == values[square] and twin != square:
+                        twins.append(square)
+        # Remove digits from peers
+        for square in twins:
+            for digit in values[square]:
+                for square in unit:
+                    if not square in twins and len(values[square]) > 2:
+                        values[square] = values[square].replace(digit, '')
     return values
 
 
@@ -184,10 +172,10 @@ def reduce_puzzle(values):
             [box for box in values.keys() if len(values[box]) == 1])
         # Use the Eliminate Strategy
         values = eliminate(values)
-        # Use the Only Choice Strategy
-        values = only_choice(values)
         # Use the Naked twins Strategy
         values = naked_twins(values)
+        # Use the Only Choice Strategy
+        values = only_choice(values)
         # Check how many boxes have a determined value, to compare
         solved_values_after = len(
             [box for box in values.keys() if len(values[box]) == 1])
@@ -211,9 +199,9 @@ def search(values):
     n, s = min((len(values[box]), box) for box in boxes
                if len(values[box]) > 1)
     # Now use recurrence to solve each one of the resulting sudokus, and
-    for value in values[box]:
+    for value in values[s]:
         new_sudoku = values.copy()
-        new_sudoku[box] = value
+        new_sudoku[s] = value
         attempt = search(new_sudoku)
         if attempt:
             return attempt
